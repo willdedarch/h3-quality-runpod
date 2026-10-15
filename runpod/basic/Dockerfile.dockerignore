@@ -1,0 +1,11 @@
+**
+!runpod/
+!runpod/basic/
+!runpod/basic/**
+**/__pycache__/
+**/*.pyc
+**/.env
+**/.env.*
+**/*.safetensors
+runpod/basic/.test-*/
+runpod/basic/prepare_manifest.py

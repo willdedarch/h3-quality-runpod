@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-15",
+  "status": "assembled_locally_static_checks_passed_not_gpu_verified",
+  "workflow_count": 5,
+  "model_file_count": 8,
+  "model_bytes": 172085535086,
+  "container_disk_gb": 200,
+  "persistent_mounts": {},
+  "singularity_file": "Minimax-h3_Singularity_ref2va_v1.3_int8.safetensors",
+  "singularity_has_extra_loras": false,
+  "comparison": "01 vs 05: same prompt, input selection, seed 42, native 20-step res_multistep/simple; checkpoint and output identifiers differ",
+  "local_checks": {
+    "framework": "Python unittest; CPU only; synthetic download payloads",
+    "passed": 8,
+    "failed": 0,
+    "covers": ["Exact archived upstream Git blobs", "Reproducible preset generation", "Native graph links and locked model coverage", "Equivalent official/Singularity comparison", "Action LoRA routing", "First/last image inputs", "Zero persistent mounts and exact payload accounting", "Atomic verified download and fatal checksum failure"]
+  },
+  "learned_weights_downloaded": false,
+  "image_built": false,
+  "image_pushed": false,
+  "runpod_resources_created": false,
+  "gpu_render_verified": false,
+  "build_limitation": "Docker Linux engine pipe dockerDesktopLinuxEngine is unavailable on this host. Dockerfile is prepared; no successful build has occurred.",
+  "remaining": ["Resolve and pin the base registry digest", "Build/publish derivative image", "Pinned remote-file preflight and real model payload verification", "Load and execute all five presets in the actual ComfyUI/GPU environment"]
+}

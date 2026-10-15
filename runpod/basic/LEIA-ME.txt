@@ -1,0 +1,55 @@
+H3 QUALITY — BF16 + SINGULARITY
+
+Pacote para um unico ComfyUI em RTX PRO 6000 Blackwell 96 GB.
+Disco temporario: 200 GB. Sem volume de rede ou volume local persistente.
+
+WORKFLOWS
+01_REF_Oficial_BF16.json — H3 Ref2VA oficial pruned BF16, sem LoRAs, 20 passos.
+02_FirstLast_Oficial_BF16.json — H3 FL2VA oficial pruned BF16, primeiro e ultimo frame, sem LoRAs, 20 passos.
+03_REF_Acao_BF16.json — Ref2VA BF16, Combat V2 0.8 + Motion Repair V2 0.6, 30 passos.
+04_FirstLast_Acao_BF16.json — FL2VA BF16, mesmas LoRAs e 30 passos.
+05_REF_Singularity_INT8_Comparacao.json — Singularity v1.3 INT8 completo, sem LoRAs, 20 passos.
+
+Todos usam encoder oficial BF16, video VAE FP16, audio VAE FP32 e 24 fps.
+Turbo e mecanismos de pular avaliacoes do modelo nao fazem parte destes presets.
+As forcas das LoRAs sao pontos iniciais ajustaveis; nao sao um otimo universal.
+Os arquivos 01/02 sao presets adaptados dos grafos oficiais, nao copias identicas.
+Os originais exatos, identificados pelo hash Git, estao em upstream/.
+
+COMPARAR OFICIAL E SINGULARITY
+Abra 01 e envie uma imagem no no de referencia.
+Abra 05 e envie exatamente a mesma imagem.
+Mantenha prompt, seed 42, resolucao, duracao, 20 passos e sampler iguais.
+Os dois grafos diferem somente na selecao do checkpoint, identificacao e nome de saida.
+Singularity e um checkpoint alternativo, selecionado por workflow. Os modelos nao
+sao somados ou carregados todos juntos na GPU. O gerenciamento de memoria e do ComfyUI.
+Este preset Singularity usa o arquivo INT8 original publicado pelo autor; nao e BF16.
+
+MONTAGEM DA IMAGEM
+Na raiz D:\H3-STUDIO-MAX:
+docker build --platform linux/amd64 -f runpod/basic/Dockerfile -t h3-quality:2026-10-15 .
+
+A camada de runtime deriva da familia de templates Jalberty selecionada na pesquisa.
+O ComfyUI v0.40.0 e instalado na imagem, separado do Studio existente.
+Antes de publicar, resolver o digest da imagem-base e trocar o campo image no
+runpod-template.v2.proposed.json pela referencia real da imagem publicada.
+O arquivo de template e uma proposta local: nao foi registrado no Runpod.
+
+INICIALIZACAO
+O bootstrap confere GPU/CUDA e espaco temporario livre.
+Confere os metadados das URLs fixadas antes de baixar os pesos.
+Baixa somente os 8 arquivos do models.lock.json, com 2 transferencias simultaneas.
+Verifica o SHA-256 completo de cada arquivo e move para a pasta final sem outra copia.
+O conjunto de pesos ocupa 172085535086 bytes, aproximadamente 172.09 GB decimais.
+Todos os cinco presets recebem seus arquivos antes da abertura do ComfyUI.
+Os arquivos de trabalho e videos ficam em /workspace/h3-basic no disco temporario.
+Baixe os videos desejados antes de parar, reiniciar ou encerrar o pod.
+HF_TOKEN deve ser informado somente como segredo/variavel do pod, se utilizado.
+
+ESTADO DA ENTREGA
+Workflows, manifesto, Dockerfile e instalador montados localmente.
+Oito verificacoes locais passaram: conexoes dos grafos, selecao de pesos,
+comparacao equivalente, frames inicial/final e verificacao/falha de download com
+pequenos dados sinteticos. Nenhum peso de IA foi baixado nesses testes.
+Imagem Docker ainda nao compilada/publicada. Renderizacao em GPU nao executada.
+Os testes locais nao substituem a execucao no ComfyUI.

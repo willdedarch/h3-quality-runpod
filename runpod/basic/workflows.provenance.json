@@ -1,0 +1,44 @@
+{
+  "upstream": [
+    {
+      "file": "official-ref2va.json",
+      "git_blob_sha": "7ffa22d98706bcd5448c09c548108a548529ed8f"
+    },
+    {
+      "file": "official-fl2va.json",
+      "git_blob_sha": "bcc680e74537bffa89bff3eb6eb11a7c220e38e9"
+    }
+  ],
+  "repository": "https://github.com/Comfy-Org/workflow_templates",
+  "presets": [
+    {
+      "file": "01_REF_Oficial_BF16.json",
+      "sha256": "83d616418905bd86f1759f97a88bdf4de20c46006551eb50b1c373f4429d9da9"
+    },
+    {
+      "file": "02_FirstLast_Oficial_BF16.json",
+      "sha256": "1a92275709fb5d11f5808402cfd3507c7fc154dcb6fb9353e5d1e8e89e7ff72b"
+    },
+    {
+      "file": "03_REF_Acao_BF16.json",
+      "sha256": "7156e39fd043d017e97f3b96e27246fbabee78bdc474706e60027c2720856a90"
+    },
+    {
+      "file": "04_FirstLast_Acao_BF16.json",
+      "sha256": "cd6a30ff8ea72a965315a4a79b98e85936294e0781cd4c0a061105ec7d22ba62"
+    },
+    {
+      "file": "05_REF_Singularity_INT8_Comparacao.json",
+      "sha256": "392c793d933a6f6600c2b7ee7d6bca783dbcb6d10eb7db2d9160d1ff6cdfe55d"
+    }
+  ],
+  "adaptations": [
+    "Selected model/encoder/VAEs",
+    "Removed optional Turbo paths",
+    "1 MP horizontal and fixed seed 42",
+    "Single reference input; exposed first and last frame",
+    "Action-only LoRA chains and 30 steps"
+  ],
+  "official_originals_preserved": true,
+  "runtime_gpu_verified": false
+}

@@ -1,0 +1,17 @@
+{
+  "name": "H3 Quality BF16 + Singularity — 200 GB ephemeral",
+  "image": "YOUR_REGISTRY/h3-quality:2026-10-15",
+  "disk": 200,
+  "mounts": {},
+  "ports": ["8188/http"],
+  "allowedCudaVersions": ["13.0", "13.1", "13.2", "13.3", "13.4"],
+  "startSsh": false,
+  "startJupyter": false,
+  "serverless": false,
+  "env": {
+    "H3_BASIC_ROOT": "/workspace/h3-basic",
+    "H3_BASIC_DOWNLOAD_WORKERS": "2",
+    "HF_XET_HIGH_PERFORMANCE": "1",
+    "HF_HUB_DISABLE_TELEMETRY": "1"
+  }
+}

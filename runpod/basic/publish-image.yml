@@ -1,0 +1,67 @@
+name: Build and publish H3 Quality
+on:
+  push:
+    branches: [main]
+    paths: ['runpod/basic/**', '.github/workflows/build-image.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: h3-quality-image
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: Check workflows and pinned model metadata without downloading weights
+        run: |
+          mkdir -p build-artifacts
+          python runpod/basic/test_bundle.py
+          python runpod/basic/preflight_models.py > build-artifacts/models-metadata.json
+      - name: Reclaim unused SDK space on disposable GitHub runner
+        run: |
+          sudo rm -rf -- /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h / /var/lib/docker
+      - name: Build and check Linux amd64 image
+        env:
+          SOURCE_URL: ${{ github.server_url }}/${{ github.repository }}
+          SOURCE_REVISION: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          docker build --platform linux/amd64 --progress plain \
+            --label "org.opencontainers.image.source=$SOURCE_URL" \
+            --label "org.opencontainers.image.revision=$SOURCE_REVISION" \
+            -f runpod/basic/Dockerfile -t h3-quality:ci . 2>&1 | tee build-artifacts/build.log
+          docker image inspect h3-quality:ci > build-artifacts/image-inspect.json
+      - name: Publish versioned image to GHCR
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_ACTOR: ${{ github.actor }}
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_REVISION: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          registry_image="ghcr.io/${GH_REPOSITORY,,}"
+          image_tag="${registry_image}:sha-${GH_REVISION:0:12}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GH_ACTOR" --password-stdin
+          trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
+          docker tag h3-quality:ci "$image_tag"
+          docker push "$image_tag" | tee build-artifacts/push.log
+          image_ref=$(docker image inspect "$image_tag" --format '{{index .RepoDigests 0}}')
+          printf '%s\n' "$image_ref" > build-artifacts/image-reference.txt
+          printf '### Published image\n`%s`\n\nFive workflows; 200 GB temporary disk; no persistent mounts. GPU inference was not run.\n' "$image_ref" >> "$GITHUB_STEP_SUMMARY"
+      - name: Keep exact image reference and build evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: h3-quality-build-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build-artifacts/
+          retention-days: 14

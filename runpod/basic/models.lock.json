@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "gpu": "RTX PRO 6000 Blackwell 96 GB",
+  "container_disk_gb": 200,
+  "persistent_volumes": false,
+  "total_size_bytes": 172085535086,
+  "models": [
+    {
+      "repository": "Comfy-Org/MiniMax-H3",
+      "revision": "bf92c4091e333e69b8ca1998e0a669f15cb0832b",
+      "file": "diffusion_models/minimax_h3_ref2va_pruned_bf16.safetensors",
+      "destination": "models/diffusion_models/minimax_h3_ref2va_pruned_bf16.safetensors",
+      "size_bytes": 40225724176,
+      "sha256_published": "37c0da793e20ca735272ec2be655f08a2e10f97a3ec8fdfb40f5b39a736ed6fe",
+      "payload_verified": false
+    },
+    {
+      "repository": "Comfy-Org/MiniMax-H3",
+      "revision": "bf92c4091e333e69b8ca1998e0a669f15cb0832b",
+      "file": "diffusion_models/minimax_h3_fl2va_pruned_bf16.safetensors",
+      "destination": "models/diffusion_models/minimax_h3_fl2va_pruned_bf16.safetensors",
+      "size_bytes": 40225724176,
+      "sha256_published": "a32572fb90b5508b201ec7c2eddcc184b13ddfd3c6f6d2cf06a0b46535d541b4",
+      "payload_verified": false
+    },
+    {
+      "repository": "Comfy-Org/MiniMax-H3",
+      "revision": "bf92c4091e333e69b8ca1998e0a669f15cb0832b",
+      "file": "text_encoders/qwen3vl_32b_minimax_h3_bf16.safetensors",
+      "destination": "models/text_encoders/qwen3vl_32b_minimax_h3_bf16.safetensors",
+      "size_bytes": 51506295256,
+      "sha256_published": "600d567f6a9629c8574e8e7041b199bdd9c59a986afa7906910a81919610607d",
+      "payload_verified": false
+    },
+    {
+      "repository": "Comfy-Org/MiniMax-H3",
+      "revision": "64fa20dbeffe251ce32fad3b811c74a6467111bb",
+      "file": "vae/minimax_h3_video_vae_fp16.safetensors",
+      "destination": "models/vae/minimax_h3_video_vae_fp16.safetensors",
+      "size_bytes": 5207808496,
+      "sha256_published": "7c1f131492e7eddacaac9069a61b81bdd39de5cc96561e677c5eab1cdce5e522",
+      "payload_verified": false
+    },
+    {
+      "repository": "Comfy-Org/MiniMax-H3",
+      "revision": "7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1",
+      "file": "vae/minimax_h3_audio_vae_fp32.safetensors",
+      "destination": "models/vae/minimax_h3_audio_vae_fp32.safetensors",
+      "size_bytes": 605254808,
+      "sha256_published": "8e505d95dd1561d47abd43d4238fd40d9bb1ae9e147ed0a4cba778d76ae4db48",
+      "payload_verified": false
+    },
+    {
+      "repository": "JOKER141/MiniMax-H3-Combat-Base-V2",
+      "revision": "233a183fb7d28b3b10d777b00d9b3ed3c691af81",
+      "file": "H3_Combat_V2.safetensors",
+      "destination": "models/loras/H3_Combat_V2.safetensors",
+      "size_bytes": 155110280,
+      "sha256_published": "5b3edb09e9d6029439badf9bc9db4ba4a355ae679b0810888de82c4793c0bac8",
+      "payload_verified": false
+    },
+    {
+      "repository": "JOKER141/MiniMax-H3-General-Motion-Continuity-Repair",
+      "revision": "7ed4f7ad3d5a4b7cc27d3ff0a6dd7c219064bbfb",
+      "file": "Motion_Repair_V2.safetensors",
+      "destination": "models/loras/Motion_Repair_V2.safetensors",
+      "size_bytes": 155110272,
+      "sha256_published": "edfa0e2858caeba7be9108883f61da8525d3c58af998c94ac7a449d9603d7574",
+      "payload_verified": false
+    },
+    {
+      "repository": "WarmBloodAban/Minimax-h3_Singularity",
+      "revision": "4150ff97bee625ce9c49488ed2cc65e4b99bf8da",
+      "file": "Minimax-h3_Singularity_ref2va_v1.3_int8.safetensors",
+      "destination": "models/diffusion_models/Minimax-h3_Singularity_ref2va_v1.3_int8.safetensors",
+      "size_bytes": 34004507622,
+      "sha256_published": "551915097b8727537a82f3a2c5acec965165ec84e780b3e9a5f28ce867fddf08",
+      "payload_verified": false,
+      "published_metadata_source": "https://huggingface.co/WarmBloodAban/Minimax-h3_Singularity/raw/main/Minimax-h3_Singularity_ref2va_v1.3_int8.safetensors"
+    }
+  ],
+  "payloads_downloaded": false,
+  "note": "Public metadata checked; pinned resolve URLs are preflighted by bootstrap before downloading. Full SHA-256 is required for each completed model."
+}
