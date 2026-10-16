@@ -32,6 +32,16 @@ Singularity e um checkpoint alternativo escolhido pelo workflow. Seu arquivo ori
 
 Para comparar oficial e Singularity, use 01 e 05 com **a mesma imagem, prompt, seed, resolucao, duracao e 20 passos**. Esses dois grafos diferem apenas na escolha do checkpoint e nos identificadores de saida.
 
+## Conferir workflows e pesos em uma GPU menor
+
+O template de inspecao configura `H3_BASIC_MODE=inspect`. Ele permite uma GPU menor compativel com o runtime CUDA 13, mantendo **os mesmos oito pesos completos**, os cinco workflows, o token opcional `HF_TOKEN` e **200 GB temporarios**. O download e a verificacao SHA-256 continuam obrigatorios. A inicializacao nao envia nenhuma geracao.
+
+Depois de iniciar o ComfyUI, o instalador consulta os nos nativos e seus seletores de arquivos. Confere os 21 tipos de nos e os oito nomes de pesos usados pelos cinco grafos e grava `/workspace/h3-basic/inspection-ready.json`. Nos logs, procure `INSPECTION READY`.
+
+Abra `H3_QUALITY` e carregue cada um dos cinco workflows para conferir os nos, conexoes e arquivos selecionados. Nao pressione Run/Queue durante essa verificacao. Os pesos estao no disco; essa conferencia nao carrega os tensores completos na VRAM nem comprova geracao de video. A fila normal do ComfyUI continua disponivel.
+
+O modo padrao `production` continua exigindo a GPU completa de 96 GB. O modo de inspecao nao altera pesos, passos ou qualidade dos presets.
+
 ## Pesos e inicializacao
 
 [models.lock.json](runpod/basic/models.lock.json) fixa repositorio, revisao, tamanho e SHA-256 de todos os oito arquivos. O total e **172085535086 bytes**, aproximadamente **172.09 GB decimais**. Os pesos ficam fora da imagem e sao baixados em cada pod novo.
@@ -40,7 +50,7 @@ O instalador usa duas transferencias simultaneas, verifica o SHA-256 completo e 
 
 ## Verificacoes e limite da validacao
 
-O build executa oito testes de integridade dos grafos e de tratamento dos downloads, confere os metadados remotos dos pesos, verifica dependencias e registro dos nos nativos e inicia o ComfyUI em CPU. O build nao baixa os pesos nem gera videos.
+O build executa testes de integridade dos grafos, limites dos modos e tratamento dos downloads, confere os metadados remotos dos pesos, verifica dependencias e registro dos nos nativos e inicia o ComfyUI em CPU. Tambem consulta o servidor HTTP real e confere os seletores com nomes de arquivos sinteticos, sem pesos reais. O build nao baixa os pesos nem gera videos.
 
 **Renderizacao e comparacao visual na GPU ainda nao foram executadas.** O resultado das verificacoes de publicacao esta em `deployment.json` e nos registros do GitHub Actions.
 

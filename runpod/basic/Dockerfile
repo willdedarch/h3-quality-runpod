@@ -15,7 +15,8 @@ RUN python -c "import importlib.metadata as m; from pathlib import Path; Path('/
     && python -m pip check \
     && python -m pip freeze > /opt/h3-basic/installed-packages.txt \
     && python /opt/h3-basic/check_image.py \
-    && cd /opt/ComfyUI && python main.py --cpu --quick-test-for-ci
+    && cd /opt/ComfyUI && python main.py --cpu --quick-test-for-ci \
+    && python /opt/h3-basic/smoke_inspect.py
 
 EXPOSE 8188
 WORKDIR /opt/ComfyUI

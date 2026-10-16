@@ -36,6 +36,13 @@ imagem Linux amd64 e publica uma versao unica no GHCR. O template efetivamente
 registrado deve usar o digest da imagem publicada, registrado em deployment.json.
 
 INICIALIZACAO
+O modo padrao H3_BASIC_MODE=production exige a GPU completa de 96 GB.
+Para conferir os mesmos workflows e pesos em uma GPU menor, o template de teste
+usa H3_BASIC_MODE=inspect. Esse modo mantem o download e o SHA-256 dos 8 arquivos.
+Depois de abrir o ComfyUI, confere os nos e os nomes dos pesos nos seletores nativos
+e grava /workspace/h3-basic/inspection-ready.json. Procure INSPECTION READY nos logs.
+Abra cada workflow para conferir os arquivos, sem pressionar Run/Queue.
+Esse teste nao carrega todos os tensores na VRAM nem valida a geracao de video.
 O bootstrap confere GPU/CUDA e espaco temporario livre.
 Confere os metadados das URLs fixadas antes de baixar os pesos.
 Baixa somente os 8 arquivos do models.lock.json, com 2 transferencias simultaneas.

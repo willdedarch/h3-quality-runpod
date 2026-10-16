@@ -68,7 +68,27 @@ def materialize(root):
     return target
 
 
+def startup_mode():
+    mode = os.environ.get("H3_BASIC_MODE", "production").strip().lower()
+    if mode not in {"production", "inspect"}:
+        raise ValueError("H3_BASIC_MODE must be production or inspect")
+    return mode
+
+
+def check_gpu_capacity(total_memory, mode):
+    if mode == "production" and total_memory < 88 * 1024**3:
+        raise RuntimeError("Production targets the complete 96 GB GPU; use H3_BASIC_MODE=inspect to inspect workflows on a smaller GPU")
+
+
+def comfy_command(root=ROOT):
+    return [sys.executable, str(COMFY / "main.py"), "--listen", "0.0.0.0", "--port", "8188",
+        "--models-directory", str(root / "models"), "--input-directory", str(root / "input"),
+        "--output-directory", str(root / "output"), "--temp-directory", str(root / "temp"),
+        "--user-directory", str(root / "user"), "--use-pytorch-cross-attention"]
+
+
 def main():
+    mode = startup_mode()
     # Configure Hub before importing it. Tokens come only from runtime secrets.
     os.environ.setdefault("HF_HOME", str(ROOT / ".cache/huggingface"))
     os.environ.setdefault("HF_XET_HIGH_PERFORMANCE", "1")
@@ -78,12 +98,12 @@ def main():
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA unavailable; no model download started")
     device = torch.cuda.get_device_properties(0)
-    if device.total_memory < 88 * 1024**3:
-        raise RuntimeError("This package targets the complete 96 GB GPU, not a smaller MIG partition")
+    check_gpu_capacity(device.total_memory, mode)
     probe = torch.zeros(1, device="cuda")
     torch.cuda.synchronize()
     del probe
     print(f"GPU: {device.name}; torch {torch.__version__}; CUDA {torch.version.cuda}", flush=True)
+    print(f"Mode: {mode}. All 8 original model files will be downloaded and verified; no generation is submitted by startup.", flush=True)
     for folder in ("models", "input", "output", "temp", "user"):
         (ROOT / folder).mkdir(parents=True, exist_ok=True)
     materialize(ROOT)
@@ -115,11 +135,11 @@ def main():
     (ROOT / "model-receipts.json").write_text(json.dumps(receipts, indent=2) + "\n")
     # Full-package readiness means all five presets have their files, including Singularity.
     print("All 8 model files verified. Starting ComfyUI with the 5 quality workflows.", flush=True)
-    command = [sys.executable, str(COMFY / "main.py"), "--listen", "0.0.0.0", "--port", "8188",
-        "--models-directory", str(ROOT / "models"), "--input-directory", str(ROOT / "input"),
-        "--output-directory", str(ROOT / "output"), "--temp-directory", str(ROOT / "temp"),
-        "--user-directory", str(ROOT / "user"), "--use-pytorch-cross-attention"]
+    command = comfy_command(ROOT)
     os.chdir(COMFY)
+    if mode == "inspect":
+        from inspect_ready import serve_inspection
+        raise SystemExit(serve_inspection(command, ROOT, PACKAGE / "workflows"))
     os.execv(sys.executable, command)
 
 

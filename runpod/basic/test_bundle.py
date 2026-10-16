@@ -4,11 +4,13 @@ import hashlib
 import json
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
 import bootstrap
 import build_workflows as workflows
+import inspect_ready
 
 ROOT = Path(__file__).resolve().parent
 
@@ -18,6 +20,73 @@ def load(name):
 
 
 class BundleTests(unittest.TestCase):
+    def test_small_gpu_only_allowed_in_explicit_inspection_mode(self):
+        with patch.dict(bootstrap.os.environ, {"H3_BASIC_MODE": "inspect"}):
+            self.assertEqual(bootstrap.startup_mode(), "inspect")
+            bootstrap.check_gpu_capacity(8 * 1024**3, "inspect")
+        with self.assertRaises(RuntimeError):
+            bootstrap.check_gpu_capacity(8 * 1024**3, "production")
+        with patch.dict(bootstrap.os.environ, {"H3_BASIC_MODE": "typo"}):
+            with self.assertRaises(ValueError):
+                bootstrap.startup_mode()
+
+    def inventory_fixture(self):
+        info = {}
+        for path in (ROOT / "workflows").glob("*.json"):
+            for n in json.loads(path.read_text())["nodes"]:
+                entry = info.setdefault(n["type"], {"input": {"required": {}}})
+                if n["type"] in inspect_ready.SELECTORS:
+                    key = inspect_ready.SELECTORS[n["type"]]
+                    choices = entry["input"]["required"].setdefault(key, [[], {}])[0]
+                    if n["widgets_values"][0] not in choices:
+                        choices.append(n["widgets_values"][0])
+        return info
+
+    def test_inspection_rejects_missing_native_node(self):
+        info = self.inventory_fixture()
+        receipt = inspect_ready.validate_inventory(info, ROOT / "workflows")
+        self.assertEqual(len(receipt["weights_in_native_selectors"]), 8)
+        self.assertFalse(receipt["generation_submitted_by_startup"])
+        del info["MiniMaxH3ReferenceToVideo"]
+        with self.assertRaisesRegex(RuntimeError, "Missing native node"):
+            inspect_ready.validate_inventory(info, ROOT / "workflows")
+
+    def test_inspection_rejects_weight_missing_from_real_selector(self):
+        info = self.inventory_fixture()
+        info["UNETLoader"]["input"]["required"]["unet_name"][0].remove(workflows.SINGULARITY)
+        with self.assertRaisesRegex(RuntimeError, "Weight is not available"):
+            inspect_ready.validate_inventory(info, ROOT / "workflows")
+
+    def test_inspect_startup_keeps_all_eight_downloads_and_never_executes_generation(self):
+        manifest = json.loads((ROOT / "models.lock.json").read_text())
+        by_file = {x["file"]: x for x in manifest["models"]}
+        fake_torch = SimpleNamespace(__version__="ci", version=SimpleNamespace(cuda="ci"),
+            zeros=lambda *a, **k: None, cuda=SimpleNamespace(is_available=lambda: True,
+            get_device_properties=lambda _: SimpleNamespace(total_memory=8 * 1024**3, name="CI synthetic GPU"),
+            synchronize=lambda: None))
+        fake_hub = SimpleNamespace(hf_hub_download=lambda **k: None,
+            hf_hub_url=lambda repo, file, revision: file,
+            get_hf_file_metadata=lambda file, token: SimpleNamespace(size=by_file[file]["size_bytes"],
+                etag=by_file[file]["sha256_published"]))
+        with tempfile.TemporaryDirectory(dir=ROOT, prefix=".test-inspect-") as directory:
+            root = Path(directory)
+            with patch.dict(bootstrap.sys.modules, {"torch": fake_torch, "huggingface_hub": fake_hub}), \
+                 patch.dict(bootstrap.os.environ, {"H3_BASIC_MODE": "inspect"}), \
+                 patch.object(bootstrap, "ROOT", root), \
+                 patch.object(bootstrap.shutil, "disk_usage", return_value=SimpleNamespace(free=500 * 1024**3)), \
+                 patch.object(bootstrap, "download_one", side_effect=lambda item, *a: root / item["destination"]) as download, \
+                 patch.object(bootstrap.os, "chdir"), \
+                 patch.object(inspect_ready, "serve_inspection", return_value=0) as serve, \
+                 patch.object(bootstrap.os, "execv") as execute:
+                with self.assertRaises(SystemExit) as stopped:
+                    bootstrap.main()
+                self.assertEqual(stopped.exception.code, 0)
+                self.assertEqual([call.args[0] for call in download.call_args_list], manifest["models"])
+                self.assertEqual(len(json.loads((root / "model-receipts.json").read_text())), 8)
+                serve.assert_called_once()
+                self.assertIn(str(root / "models"), serve.call_args.args[0])
+                execute.assert_not_called()
+
     def test_exact_upstream_and_reproducible_presets(self):
         before = {p.name: p.read_bytes() for p in (ROOT / "workflows").glob("*.json")}
         workflows.build()
