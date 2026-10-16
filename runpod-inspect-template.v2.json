@@ -1,0 +1,28 @@
+{
+  "name": "H3 Teste workflows e pesos — GPU menor — 200 GB",
+  "image": "ghcr.io/willdedarch/h3-quality-runpod@sha256:b0a0cea955daa51c187949b9ea95567ee7b1ec40e8f41d45282a8fe2871815c6",
+  "disk": 200,
+  "mounts": {},
+  "ports": [
+    "8188/http"
+  ],
+  "allowedCudaVersions": [
+    "13.0",
+    "13.1",
+    "13.2",
+    "13.3",
+    "13.4"
+  ],
+  "category": "NVIDIA",
+  "public": false,
+  "serverless": false,
+  "startSsh": false,
+  "startJupyter": false,
+  "env": {
+    "H3_BASIC_MODE": "inspect",
+    "H3_BASIC_ROOT": "/workspace/h3-basic",
+    "H3_BASIC_DOWNLOAD_WORKERS": "2",
+    "HF_XET_HIGH_PERFORMANCE": "1",
+    "HF_HUB_DISABLE_TELEMETRY": "1"
+  }
+}

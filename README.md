@@ -4,6 +4,8 @@ Um unico ComfyUI para **RTX PRO 6000 Blackwell 96 GB**, com **200 GB de disco te
 
 [Abrir o template no RunPod](https://console.runpod.io/deploy?template=952bbvmmrg).
 
+[Abrir o template de teste em GPU menor](https://console.runpod.io/deploy?template=d9ihnpcfgy) — mesmos pesos e workflows, sem gerar video.
+
 A imagem foi publicada e o template foi registrado. A referencia exata, o build aprovado e a leitura de confirmacao do RunPod ficam em [deployment.json](deployment.json). Os [registros do build](https://github.com/willdedarch/h3-quality-runpod/actions/runs/38828290979) mostram as verificacoes da imagem.
 
 ## Cinco workflows
@@ -33,6 +35,8 @@ Singularity e um checkpoint alternativo escolhido pelo workflow. Seu arquivo ori
 Para comparar oficial e Singularity, use 01 e 05 com **a mesma imagem, prompt, seed, resolucao, duracao e 20 passos**. Esses dois grafos diferem apenas na escolha do checkpoint e nos identificadores de saida.
 
 ## Conferir workflows e pesos em uma GPU menor
+
+[Use este template de teste](https://console.runpod.io/deploy?template=d9ihnpcfgy). A imagem publicada, o teste HTTP aprovado e a leitura de confirmacao do template estao em [inspection-deployment.json](inspection-deployment.json).
 
 O template de inspecao configura `H3_BASIC_MODE=inspect`. Ele permite uma GPU menor compativel com o runtime CUDA 13, mantendo **os mesmos oito pesos completos**, os cinco workflows, o token opcional `HF_TOKEN` e **200 GB temporarios**. O download e a verificacao SHA-256 continuam obrigatorios. A inicializacao nao envia nenhuma geracao.
 

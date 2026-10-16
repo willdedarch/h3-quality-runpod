@@ -1,0 +1,92 @@
+{
+  "date_local": "2026-10-15",
+  "timezone": "America/Sao_Paulo",
+  "status": "inspection_image_published_and_template_readback_verified_no_pod_started",
+  "purpose": "Open all five workflows and inspect all eight original weight filenames on a smaller compatible GPU without running a workflow",
+  "repository": "https://github.com/willdedarch/h3-quality-runpod",
+  "source_revision": "3de37c005dab73756551e8f5737102ea38d6aa7b",
+  "build": {
+    "run_id": 38839738755,
+    "url": "https://github.com/willdedarch/h3-quality-runpod/actions/runs/38839738755",
+    "conclusion": "success",
+    "unit_tests_passed": 12,
+    "pinned_model_metadata_verified": 8,
+    "native_node_types_registered": 21,
+    "workflow_files": 5,
+    "real_comfyui_cpu_http_test": "passed",
+    "frontend_html_http_200": true,
+    "native_weight_selectors": "all 8 filenames recognized using synthetic files",
+    "queue_empty": true,
+    "learned_weights_downloaded": false,
+    "model_tensors_loaded": false,
+    "gpu_inference_executed": false
+  },
+  "image": {
+    "reference": "ghcr.io/willdedarch/h3-quality-runpod@sha256:b0a0cea955daa51c187949b9ea95567ee7b1ec40e8f41d45282a8fe2871815c6",
+    "platform": "linux/amd64",
+    "anonymous_manifest_pull": true,
+    "anonymous_digest_verified": true,
+    "compressed_layers_bytes": 6364179049,
+    "uncompressed_image_bytes": 12796660523,
+    "model_weights_baked": false
+  },
+  "runpod": {
+    "template_id": "d9ihnpcfgy",
+    "deploy_url": "https://console.runpod.io/deploy?template=d9ihnpcfgy",
+    "readback_verified": true,
+    "template": {
+      "allowedCudaVersions": [
+        "13.0",
+        "13.1",
+        "13.2",
+        "13.3",
+        "13.4"
+      ],
+      "args": "",
+      "category": "NVIDIA",
+      "disk": 200,
+      "env": {
+        "H3_BASIC_DOWNLOAD_WORKERS": "2",
+        "H3_BASIC_MODE": "inspect",
+        "H3_BASIC_ROOT": "/workspace/h3-basic",
+        "HF_HUB_DISABLE_TELEMETRY": "1",
+        "HF_XET_HIGH_PERFORMANCE": "1"
+      },
+      "id": "d9ihnpcfgy",
+      "image": "ghcr.io/willdedarch/h3-quality-runpod@sha256:b0a0cea955daa51c187949b9ea95567ee7b1ec40e8f41d45282a8fe2871815c6",
+      "mounts": {},
+      "name": "H3 Teste workflows e pesos — GPU menor — 200 GB",
+      "ports": [
+        "8188/http"
+      ],
+      "public": false,
+      "registry": null,
+      "serverless": false,
+      "startJupyter": false,
+      "startSsh": false
+    },
+    "pods_created": 0,
+    "volumes_created": 0
+  },
+  "runtime": {
+    "mode": "inspect",
+    "model_file_count": 8,
+    "model_bytes": 172085535086,
+    "container_disk_gb": 200,
+    "persistent_mounts": {},
+    "all_original_weights_downloaded_on_startup": true,
+    "full_sha256_required_before_comfyui": true,
+    "gpu_vram_minimum_for_production_not_enforced_in_inspect": true,
+    "compatible_cuda_gpu_required": true,
+    "readiness_report": "/workspace/h3-basic/inspection-ready.json",
+    "readiness_log_marker": "INSPECTION READY",
+    "generations_submitted_by_startup": 0,
+    "generation_controls": "Normal ComfyUI controls remain available; do not click Run/Queue for this inspection",
+    "hf_token": "Optional HF_TOKEN environment variable; add only through Runpod environment/secrets"
+  },
+  "limitations": [
+    "Real 172.09 GB model payloads will be downloaded and SHA-256 checked when the user's pod starts",
+    "Live visual opening of each workflow in the user's browser is not yet verified",
+    "Filename discovery and file integrity do not prove tensor loading, GPU memory fit or video generation"
+  ]
+}
