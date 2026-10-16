@@ -1,0 +1,71 @@
+{
+  "date_local": "2026-10-15",
+  "timezone": "America/Sao_Paulo",
+  "status": "image_published_and_template_created_gpu_render_not_run",
+  "repository": "https://github.com/willdedarch/h3-quality-runpod",
+  "source_revision": "2ce6a540177713279c511bfda9f8ec4c15494068",
+  "build": {
+    "run_id": 38828290979,
+    "url": "https://github.com/willdedarch/h3-quality-runpod/actions/runs/38828290979",
+    "conclusion": "success",
+    "unit_tests_passed": 8,
+    "model_metadata_files_verified": 8,
+    "native_node_types_registered": 21,
+    "workflows_schema_checked": 5,
+    "comfyui_cpu_startup": "passed",
+    "learned_weights_downloaded": false
+  },
+  "image": {
+    "reference": "ghcr.io/willdedarch/h3-quality-runpod@sha256:6efbb80787017675a1f3c32a4e08a87867fea6af4f19e7d5aabbe3f0eed34fd6",
+    "platform": "linux/amd64",
+    "anonymous_manifest_pull": true,
+    "anonymous_manifest_digest_verified": true,
+    "compressed_layers_bytes": 6364176706,
+    "uncompressed_size_bytes": 12796631801,
+    "model_weights_baked": false
+  },
+  "runpod": {
+    "template_id": "952bbvmmrg",
+    "deploy_url": "https://console.runpod.io/deploy?template=952bbvmmrg",
+    "readback_verified": true,
+    "template": {
+      "allowedCudaVersions": [
+        "13.0",
+        "13.1",
+        "13.2",
+        "13.3",
+        "13.4"
+      ],
+      "args": "",
+      "category": "NVIDIA",
+      "disk": 200,
+      "env": {
+        "H3_BASIC_DOWNLOAD_WORKERS": "2",
+        "H3_BASIC_ROOT": "/workspace/h3-basic",
+        "HF_HUB_DISABLE_TELEMETRY": "1",
+        "HF_XET_HIGH_PERFORMANCE": "1"
+      },
+      "id": "952bbvmmrg",
+      "image": "ghcr.io/willdedarch/h3-quality-runpod@sha256:6efbb80787017675a1f3c32a4e08a87867fea6af4f19e7d5aabbe3f0eed34fd6",
+      "mounts": {},
+      "name": "H3 Quality BF16 + Singularity — 200 GB ephemeral",
+      "ports": [
+        "8188/http"
+      ],
+      "public": false,
+      "registry": null,
+      "serverless": false,
+      "startJupyter": false,
+      "startSsh": false
+    },
+    "pods_created": 0,
+    "volumes_created": 0
+  },
+  "gpu_render_verified": false,
+  "gpu_quality_comparison_verified": false,
+  "runtime_model_payload_verification": "Performed on pod startup; full SHA-256 required before ComfyUI starts",
+  "model_payload_bytes": 172085535086,
+  "remaining": [
+    "Start the 96 GB GPU pod when desired and execute the five workflows to validate real inference and visual quality"
+  ]
+}

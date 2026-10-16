@@ -1,55 +1,53 @@
-H3 QUALITY — BF16 + SINGULARITY
+# MiniMax H3 Quality — ComfyUI para RunPod
 
-Pacote para um unico ComfyUI em RTX PRO 6000 Blackwell 96 GB.
-Disco temporario: 200 GB. Sem volume de rede ou volume local persistente.
+Um unico ComfyUI para **RTX PRO 6000 Blackwell 96 GB**, com **200 GB de disco temporario**, sem volume de rede ou volume local persistente. ComfyUI **v0.40.0**; imagem-base fixada por digest; encoder oficial Qwen BF16.
 
-WORKFLOWS
-01_REF_Oficial_BF16.json — H3 Ref2VA oficial pruned BF16, sem LoRAs, 20 passos.
-02_FirstLast_Oficial_BF16.json — H3 FL2VA oficial pruned BF16, primeiro e ultimo frame, sem LoRAs, 20 passos.
-03_REF_Acao_BF16.json — Ref2VA BF16, Combat V2 0.8 + Motion Repair V2 0.6, 30 passos.
-04_FirstLast_Acao_BF16.json — FL2VA BF16, mesmas LoRAs e 30 passos.
-05_REF_Singularity_INT8_Comparacao.json — Singularity v1.3 INT8 completo, sem LoRAs, 20 passos.
+[Abrir o template no RunPod](https://console.runpod.io/deploy?template=952bbvmmrg).
 
-Todos usam encoder oficial BF16, video VAE FP16, audio VAE FP32 e 24 fps.
-Turbo e mecanismos de pular avaliacoes do modelo nao fazem parte destes presets.
-As forcas das LoRAs sao pontos iniciais ajustaveis; nao sao um otimo universal.
-Os arquivos 01/02 sao presets adaptados dos grafos oficiais, nao copias identicas.
-Os originais exatos, identificados pelo hash Git, estao em upstream/.
+A imagem foi publicada e o template foi registrado. A referencia exata, o build aprovado e a leitura de confirmacao do RunPod ficam em [deployment.json](deployment.json). Os [registros do build](https://github.com/willdedarch/h3-quality-runpod/actions/runs/38828290979) mostram as verificacoes da imagem.
 
-COMPARAR OFICIAL E SINGULARITY
-Abra 01 e envie uma imagem no no de referencia.
-Abra 05 e envie exatamente a mesma imagem.
-Mantenha prompt, seed 42, resolucao, duracao, 20 passos e sampler iguais.
-Os dois grafos diferem somente na selecao do checkpoint, identificacao e nome de saida.
-Singularity e um checkpoint alternativo, selecionado por workflow. Os modelos nao
-sao somados ou carregados todos juntos na GPU. O gerenciamento de memoria e do ComfyUI.
-Este preset Singularity usa o arquivo INT8 original publicado pelo autor; nao e BF16.
+## Cinco workflows
 
-MONTAGEM DA IMAGEM
-Na raiz D:\H3-STUDIO-MAX:
-docker build --platform linux/amd64 -f runpod/basic/Dockerfile -t h3-quality:2026-10-15 .
+| Arquivo | Modelo e ajustes | Passos |
+| --- | --- | --- |
+| `01_REF_Oficial_BF16.json` | Ref2VA oficial pruned BF16, sem LoRAs | 20 |
+| `02_FirstLast_Oficial_BF16.json` | FL2VA oficial pruned BF16, primeiro e ultimo frame, sem LoRAs | 20 |
+| `03_REF_Acao_BF16.json` | Ref2VA BF16 + Combat V2 0.8 + Motion Repair V2 0.6 | 30 |
+| `04_FirstLast_Acao_BF16.json` | FL2VA BF16 + as mesmas LoRAs | 30 |
+| `05_REF_Singularity_INT8_Comparacao.json` | Singularity v1.3 INT8 completo, sem LoRAs adicionais | 20 |
 
-A camada de runtime deriva da familia de templates Jalberty selecionada na pesquisa.
-O ComfyUI v0.40.0 e instalado na imagem, separado do Studio existente.
-Antes de publicar, resolver o digest da imagem-base e trocar o campo image no
-runpod-template.v2.proposed.json pela referencia real da imagem publicada.
-O arquivo de template e uma proposta local: nao foi registrado no Runpod.
+Todos usam atencao nativa do PyTorch, encoder BF16, video VAE FP16, audio VAE FP32 e 24 fps. Os presets iniciais usam 1 MP horizontal, duracao nominal de 5 segundos e seed fixa 42. Nao ativam Turbo, cache de inferencia nem mecanismos para pular avaliacoes do modelo. As forcas das LoRAs sao pontos iniciais ajustaveis.
 
-INICIALIZACAO
-O bootstrap confere GPU/CUDA e espaco temporario livre.
-Confere os metadados das URLs fixadas antes de baixar os pesos.
-Baixa somente os 8 arquivos do models.lock.json, com 2 transferencias simultaneas.
-Verifica o SHA-256 completo de cada arquivo e move para a pasta final sem outra copia.
-O conjunto de pesos ocupa 172085535086 bytes, aproximadamente 172.09 GB decimais.
-Todos os cinco presets recebem seus arquivos antes da abertura do ComfyUI.
-Os arquivos de trabalho e videos ficam em /workspace/h3-basic no disco temporario.
-Baixe os videos desejados antes de parar, reiniciar ou encerrar o pod.
-HF_TOKEN deve ser informado somente como segredo/variavel do pod, se utilizado.
+Os arquivos 01/02 sao **adaptacoes dos grafos oficiais** para os arquivos selecionados. Os originais exatos e a licenca estao em [upstream](runpod/basic/upstream); os hashes de origem e das adaptacoes estao em [workflows.provenance.json](runpod/basic/workflows.provenance.json).
 
-ESTADO DA ENTREGA
-Workflows, manifesto, Dockerfile e instalador montados localmente.
-Oito verificacoes locais passaram: conexoes dos grafos, selecao de pesos,
-comparacao equivalente, frames inicial/final e verificacao/falha de download com
-pequenos dados sinteticos. Nenhum peso de IA foi baixado nesses testes.
-Imagem Docker ainda nao compilada/publicada. Renderizacao em GPU nao executada.
-Os testes locais nao substituem a execucao no ComfyUI.
+Singularity e um checkpoint alternativo escolhido pelo workflow. Seu arquivo original publicado e INT8. Selecionar esse workflow nao soma o checkpoint oficial nem carrega todos os modelos ao mesmo tempo na GPU.
+
+## Usar no RunPod
+
+1. Abra o link do template em `deployment.json` e selecione a **RTX PRO 6000 Blackwell completa, com 96 GB**.
+2. Mantenha **Container Disk 200 GB**, sem adicionar volumes persistentes ou de rede.
+3. Inicie o pod. A inicializacao confere GPU/CUDA e espaco livre, baixa e verifica os oito arquivos de pesos e depois abre o ComfyUI na porta **8188**.
+4. No ComfyUI, abra a pasta de workflows `H3_QUALITY`. Envie a imagem de referencia; para First/Last, envie as duas imagens.
+5. Baixe os videos de `/workspace/h3-basic/output` antes de parar, reiniciar ou encerrar o pod. Esse diretorio esta no disco temporario.
+
+Para comparar oficial e Singularity, use 01 e 05 com **a mesma imagem, prompt, seed, resolucao, duracao e 20 passos**. Esses dois grafos diferem apenas na escolha do checkpoint e nos identificadores de saida.
+
+## Pesos e inicializacao
+
+[models.lock.json](runpod/basic/models.lock.json) fixa repositorio, revisao, tamanho e SHA-256 de todos os oito arquivos. O total e **172085535086 bytes**, aproximadamente **172.09 GB decimais**. Os pesos ficam fora da imagem e sao baixados em cada pod novo.
+
+O instalador usa duas transferencias simultaneas, verifica o SHA-256 completo e move o arquivo validado para o destino sem manter uma segunda copia completa. Todos os cinco workflows recebem seus arquivos antes da abertura do ComfyUI. Nenhuma quantizacao alternativa e substituida automaticamente.
+
+## Verificacoes e limite da validacao
+
+O build executa oito testes de integridade dos grafos e de tratamento dos downloads, confere os metadados remotos dos pesos, verifica dependencias e registro dos nos nativos e inicia o ComfyUI em CPU. O build nao baixa os pesos nem gera videos.
+
+**Renderizacao e comparacao visual na GPU ainda nao foram executadas.** O resultado das verificacoes de publicacao esta em `deployment.json` e nos registros do GitHub Actions.
+
+## Reconstruir a imagem
+
+```sh
+docker build --platform linux/amd64 -f runpod/basic/Dockerfile -t h3-quality:local .
+```
+
+O GitHub Actions publica cada build aprovado no GHCR com tag unica. O template deve apontar para o **digest** publicado, para preservar a versao escolhida.

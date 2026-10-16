@@ -1,0 +1,27 @@
+{
+  "name": "H3 Quality BF16 + Singularity — 200 GB ephemeral",
+  "image": "ghcr.io/willdedarch/h3-quality-runpod@sha256:6efbb80787017675a1f3c32a4e08a87867fea6af4f19e7d5aabbe3f0eed34fd6",
+  "disk": 200,
+  "mounts": {},
+  "ports": [
+    "8188/http"
+  ],
+  "allowedCudaVersions": [
+    "13.0",
+    "13.1",
+    "13.2",
+    "13.3",
+    "13.4"
+  ],
+  "startSsh": false,
+  "startJupyter": false,
+  "serverless": false,
+  "public": false,
+  "category": "NVIDIA",
+  "env": {
+    "H3_BASIC_ROOT": "/workspace/h3-basic",
+    "H3_BASIC_DOWNLOAD_WORKERS": "2",
+    "HF_XET_HIGH_PERFORMANCE": "1",
+    "HF_HUB_DISABLE_TELEMETRY": "1"
+  }
+}
