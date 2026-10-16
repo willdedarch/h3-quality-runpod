@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED=1 H3_BASIC_ROOT=/workspace/h3-basic \
 COPY runpod/basic/ /opt/h3-basic/
 RUN python -c "import importlib.metadata as m; from pathlib import Path; Path('/opt/h3-basic/torch.constraints.txt').write_text(''.join(p+'=='+m.version(p)+'\n' for p in ('torch','torchvision','torchaudio')))" \
     && git clone --depth 1 --branch v0.40.0 https://github.com/Comfy-Org/ComfyUI.git /opt/ComfyUI \
-    && python -m pip install --no-cache-dir -c /opt/h3-basic/torch.constraints.txt -r /opt/ComfyUI/requirements.txt \
+    && python -m pip install --no-cache-dir -c /opt/h3-basic/torch.constraints.txt -r /opt/ComfyUI/requirements.txt 'click>=8,<8.4,!=8.3.0' \
     && python /opt/h3-basic/build_workflows.py \
     && python -m pip check \
     && python -m pip freeze > /opt/h3-basic/installed-packages.txt \

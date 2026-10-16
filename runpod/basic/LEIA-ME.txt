@@ -31,9 +31,9 @@ docker build --platform linux/amd64 -f runpod/basic/Dockerfile -t h3-quality:202
 
 A camada de runtime deriva da familia de templates Jalberty selecionada na pesquisa.
 O ComfyUI v0.40.0 e instalado na imagem, separado do Studio existente.
-Antes de publicar, resolver o digest da imagem-base e trocar o campo image no
-runpod-template.v2.proposed.json pela referencia real da imagem publicada.
-O arquivo de template e uma proposta local: nao foi registrado no Runpod.
+A imagem-base esta fixada por digest. O GitHub Actions constroi e verifica a
+imagem Linux amd64 e publica uma versao unica no GHCR. O template efetivamente
+registrado deve usar o digest da imagem publicada, registrado em deployment.json.
 
 INICIALIZACAO
 O bootstrap confere GPU/CUDA e espaco temporario livre.
@@ -46,10 +46,10 @@ Os arquivos de trabalho e videos ficam em /workspace/h3-basic no disco temporari
 Baixe os videos desejados antes de parar, reiniciar ou encerrar o pod.
 HF_TOKEN deve ser informado somente como segredo/variavel do pod, se utilizado.
 
-ESTADO DA ENTREGA
-Workflows, manifesto, Dockerfile e instalador montados localmente.
-Oito verificacoes locais passaram: conexoes dos grafos, selecao de pesos,
+VERIFICACOES
+Oito verificacoes automatizadas cobrem conexoes dos grafos, selecao de pesos,
 comparacao equivalente, frames inicial/final e verificacao/falha de download com
-pequenos dados sinteticos. Nenhum peso de IA foi baixado nesses testes.
-Imagem Docker ainda nao compilada/publicada. Renderizacao em GPU nao executada.
-Os testes locais nao substituem a execucao no ComfyUI.
+pequenos dados sinteticos. Nenhum peso de IA e baixado nesses testes.
+A construcao tambem confere dependencias, registro dos nos nativos e inicio
+do ComfyUI em CPU. A execucao dos cinco presets na GPU e uma verificacao separada.
+Consulte deployment.json e o GitHub Actions para o resultado da publicacao.
