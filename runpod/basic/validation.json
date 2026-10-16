@@ -1,6 +1,6 @@
 {
   "date": "2026-10-15",
-  "status": "assembled_locally_static_checks_passed_not_gpu_verified",
+  "status": "image_published_and_template_created_gpu_render_not_run",
   "workflow_count": 5,
   "model_file_count": 8,
   "model_bytes": 172085535086,
@@ -16,10 +16,16 @@
     "covers": ["Exact archived upstream Git blobs", "Reproducible preset generation", "Native graph links and locked model coverage", "Equivalent official/Singularity comparison", "Action LoRA routing", "First/last image inputs", "Zero persistent mounts and exact payload accounting", "Atomic verified download and fatal checksum failure"]
   },
   "learned_weights_downloaded": false,
-  "image_built": false,
-  "image_pushed": false,
-  "runpod_resources_created": false,
+  "image_built": true,
+  "image_pushed": true,
+  "anonymous_registry_manifest_verified": true,
+  "runpod_resources_created": true,
+  "runpod_template_id": "952bbvmmrg",
+  "runpod_pods_created": 0,
+  "runpod_volumes_created": 0,
   "gpu_render_verified": false,
-  "build_limitation": "Docker Linux engine pipe dockerDesktopLinuxEngine is unavailable on this host. Dockerfile is prepared; no successful build has occurred.",
-  "remaining": ["Resolve and pin the base registry digest", "Build/publish derivative image", "Pinned remote-file preflight and real model payload verification", "Load and execute all five presets in the actual ComfyUI/GPU environment"]
+  "build_limitation": null,
+  "build_url": "https://github.com/willdedarch/h3-quality-runpod/actions/runs/38828290979",
+  "deployment_receipt": "deployment.json",
+  "remaining": ["Full model payload SHA-256 verification on pod startup", "Load and execute all five presets in the actual ComfyUI/GPU environment"]
 }
